@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import {connect} from 'react-redux'
+import {authenticate} from '../../redux/actions/authActions'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Typography, Button, Card, Grid, CircularProgress, Snackbar } from '@material-ui/core';
@@ -27,15 +29,16 @@ function Login(props) {
           password: Yup.string().required('Required'),
         })}
         onSubmit={(values, { setSubmitting }) => {
+          // display loading indicator
           setError(false);
           setSubmitting(true);
+          
+          // Dispatch authenticate action
+          props.authenticate(values.user, values.password);
+          history.push('/welcome');
 
-          if (values.user === 'tato' && values.password === 'password') {
-            setError(false);
-            history.push('/welcome');
-          } else {
-            setError(true);
-          }
+          //TODO: add error handling
+
           setSubmitting(false);
         }}
       >
@@ -70,4 +73,10 @@ function Login(props) {
   );
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    authenticate: (username, password) => dispatch(authenticate(username, password))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Login);

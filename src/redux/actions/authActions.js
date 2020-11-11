@@ -15,27 +15,13 @@ export const logOut = () => {
   };
 };
 
-// Methods (Async)
+// Methods (Async --> thunk)
 
 export const authenticate = (username, password) => (dispatch) => {
-  /*fetch(`http://localhost:4000/login`, {
-    //TODO: update API url
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify(userInfo),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      //TODO: extract user from JWT token
-      //TODO: handle wrong credentials and throw exception
-      localStorage.setItem('token', data.token);
-      dispatch(setUser(data.user));
-    });*/
+  console.log('Action authenticate dispatched with ' + username + ' and ' + password);
+  //TODO: call authenticate API with axios
 
   //mocked for now
-  localStorage.setItem('token', data.token);
-  dispatch(setUser(data.user));
+  //localStorage.setItem('token', 'fake-mocked-token');
+  dispatch(setUser('mock username'));
 };
