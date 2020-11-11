@@ -23,5 +23,5 @@ export const authenticate = (username, password) => (dispatch) => {
 
   //mocked for now
   //localStorage.setItem('token', 'fake-mocked-token');
-  dispatch(setUser('mock username'));
+  dispatch(setUser(username));
 };

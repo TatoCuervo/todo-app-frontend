@@ -37,8 +37,6 @@ function Login(props) {
           props.authenticate(values.user, values.password);
           history.push('/welcome');
 
-          //TODO: add error handling
-
           setSubmitting(false);
         }}
       >

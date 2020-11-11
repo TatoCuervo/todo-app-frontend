@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux'
 import { Grid, Button } from '@material-ui/core';
 
 function Welcome(props) {
@@ -10,7 +11,7 @@ function Welcome(props) {
   
   return (
     <Grid container direction='column' alignItems='center' spacing={2}>
-      <h3>Welcome Username</h3>
+      <h3>Welcome {props.username}</h3>
       <Button variant='contained' color='primary' onClick={handleLogout}>
         Logout
       </Button>
@@ -18,4 +19,8 @@ function Welcome(props) {
   );
 }
 
-export default Welcome;
+const mapStateToProps = state => {
+  return { username: state.auth.user };
+};
+
+export default connect(mapStateToProps, null)(Welcome);
