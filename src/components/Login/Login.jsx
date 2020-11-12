@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {connect} from 'react-redux'
-import {authenticate} from '../../redux/actions/authActions'
+import {setUser} from '../../redux/actions/authActions'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Typography, Button, Card, Grid, CircularProgress, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from 'formik-material-ui';
+import axios from 'axios';
 
 const useStyles = makeStyles({
   card: {
@@ -33,11 +34,19 @@ function Login(props) {
           setError(false);
           setSubmitting(true);
           
-          // Dispatch authenticate action
-          props.authenticate(values.user, values.password);
-          history.push('/welcome');
-
-          setSubmitting(false);
+          // Call Authenticate API
+          axios.post('/mock-authenticate-api', {...values})
+            .then((_) => {
+              // auth success
+              setSubmitting(false);
+              props.setUser(values.user);
+              //localStorage.setItem('token', 'fake-mocked-token');
+              history.push('/welcome');
+            })
+            .catch((err) => {
+              setSubmitting(false);
+              setError(true);
+            });
         }}
       >
         {({ isSubmitting, handleSubmit }) => (
@@ -73,7 +82,7 @@ function Login(props) {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    authenticate: (username, password) => dispatch(authenticate(username, password))
+    setUser: (username) => dispatch(setUser(username))
   }
 }
 
