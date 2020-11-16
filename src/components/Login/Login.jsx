@@ -41,7 +41,7 @@ function Login(props) {
               // auth success
               setSubmitting(false);
               props.setUser(values.user);
-              //localStorage.setItem('token', 'fake-mocked-token');
+              localStorage.setItem(`TOKEN-${values.user}`, 'fake-mocked-token');
               history.push('/welcome');
             })
             .catch((err) => {
