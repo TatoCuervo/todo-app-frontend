@@ -8,6 +8,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from 'formik-material-ui';
 import axios from 'axios';
+import api from '../../api/api';
 
 const useStyles = makeStyles({
   card: {
@@ -35,7 +36,7 @@ function Login(props) {
           setSubmitting(true);
           
           // Call Authenticate API
-          axios.post('/mock-authenticate-api', {...values})
+          axios.post(api.AUTHENTICATE, {...values})
             .then((_) => {
               // auth success
               setSubmitting(false);

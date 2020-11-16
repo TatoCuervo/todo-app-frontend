@@ -16,12 +16,3 @@ export const logOut = () => {
 };
 
 // Methods (Async --> thunk)
-
-export const authenticate = (username, password) => (dispatch) => {
-  console.log('Action authenticate dispatched with ' + username + ' and ' + password);
-  //TODO: call authenticate API with axios
-
-  //mocked for now
-  //localStorage.setItem('token', 'fake-mocked-token');
-  dispatch(setUser(username));
-};
