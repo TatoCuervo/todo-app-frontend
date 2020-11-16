@@ -6,6 +6,7 @@ function Welcome(props) {
   let history = props.history;
 
   const handleLogout = () => {
+    localStorage.clear();
     history.push('/login');
   };
   
