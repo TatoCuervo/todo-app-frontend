@@ -1,5 +1,5 @@
 const api = {
-  HOME: '/',
+  BASE: '/api/v1.0',
   AUTHENTICATE: '/mock-authenticate-api',
 };
 
