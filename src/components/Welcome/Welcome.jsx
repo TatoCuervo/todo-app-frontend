@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import {connect} from 'react-redux'
 import { Grid, Button } from '@material-ui/core';
+import api from '../../api/api';
+import axios from 'axios';
 
 function Welcome(props) {
   let history = props.history;
+  const [loading, setLoading] = useState(true);
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    async function getTodos() {
+      await axios
+        .get(api.TODOS)
+        .then((response) => {
+          // check if the data is populated
+          console.log(response.data);
+          setTodos(response.data);
+          setLoading(false);
+        });
+    }
+    if (loading) {
+      // if the result is not ready make the axios call
+      getTodos();
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
