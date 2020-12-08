@@ -21,6 +21,7 @@ function Welcome(props) {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
   const [iserror, setIserror] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const [todos, setTodos] = useState([]);
 
   useEffect(() => {
@@ -36,13 +37,32 @@ function Welcome(props) {
         .catch((error) => {
           setLoading(false);
           setIserror(true);
+          setErrorMessage('Unable to load TODO list');
         });
     }
     if (loading) {
-      // if the result is not ready make the axios call
+      // if the result is not ready make the call
       getTodos();
     }
   }, []);
+
+  const handleRowAdd = (newTodo, resolve) => {
+    axios
+      .post(api.TODOS, newTodo)
+      .then((res) => {
+        let todoToAdd = [...todos];
+        todoToAdd.push(newTodo);
+        setTodos(todoToAdd);
+        resolve();
+        setIserror(false);
+        setErrorMessage('');
+      })
+      .catch((error) => {
+        setIserror(true);
+        setErrorMessage('Unable to add new Todo item');
+        resolve();
+      });
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -61,15 +81,15 @@ function Welcome(props) {
             icons={tableIcons}
             columns={[
               { title: 'id', field: 'id', hidden: true },
-              { title: 'Description', field: 'description' },
-              { title: 'Due Date', field: 'targetDate', type: 'date' },
+              { title: 'Description', field: 'description', validate: (rowData) => (rowData.description === '' ? 'Description cannot be empty' : '') },
+              { title: 'Due Date', field: 'targetDate', type: 'date', validate: (rowData) => (rowData.description === '' ? 'Date cannot be empty' : '') },
               { title: 'Done', field: 'done', type: 'boolean' },
             ]}
             data={todos}
             editable={{
-              onRowUpdate: (newData, oldData) =>
+              onRowUpdate: (newData) =>
                 new Promise((resolve) => {
-                  handleRowUpdate(newData, oldData, resolve);
+                  handleRowUpdate(newData, resolve);
                 }),
               onRowAdd: (newData) =>
                 new Promise((resolve) => {
@@ -97,7 +117,7 @@ function Welcome(props) {
       </Grid>
       <Snackbar open={iserror} autoHideDuration={2000}>
         <MuiAlert elevation={6} variant='filled' severity='error'>
-          Unable to fetch Todo list
+          {errorMessage}
         </MuiAlert>
       </Snackbar>
     </>
@@ -105,13 +125,6 @@ function Welcome(props) {
 }
 
 const handleRowUpdate = (newData, oldData, resolve) => {
-  console.log(oldData);
-  console.log(newData);
-  resolve();
-};
-
-const handleRowAdd = (newData, oldData, resolve) => {
-  console.log('handleRowAdd');
   resolve();
 };
 
