@@ -64,6 +64,23 @@ function Welcome(props) {
       });
   };
 
+  const handleRowDelete = (oldData, resolve) => {
+    axios
+      .delete(api.TODOS + '/' + oldData.id)
+      .then((res) => {
+        const todoDelete = [...todos];
+        const index = oldData.tableData.id;
+        todoDelete.splice(index, 1);
+        setTodos([...todoDelete]);
+        resolve();
+      })
+      .catch((error) => {
+        setIserror(true);
+        setErrorMessage(`Unable to add delete Todo ${oldData.tableData.id}`);
+        resolve();
+      });
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     history.push('/login');
@@ -125,11 +142,6 @@ function Welcome(props) {
 }
 
 const handleRowUpdate = (newData, oldData, resolve) => {
-  resolve();
-};
-
-const handleRowDelete = (newData, oldData, resolve) => {
-  console.log('handleRowDelete');
   resolve();
 };
 
