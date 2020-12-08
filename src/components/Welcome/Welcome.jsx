@@ -64,12 +64,12 @@ function Welcome(props) {
       });
   };
 
-  const handleRowDelete = (oldData, resolve) => {
+  const handleRowDelete = (oldTodo, resolve) => {
     axios
-      .delete(api.TODOS + '/' + oldData.id)
+      .delete(api.TODOS + '/' + oldTodo.id)
       .then((res) => {
         const todoDelete = [...todos];
-        const index = oldData.tableData.id;
+        const index = oldTodo.tableData.id;
         todoDelete.splice(index, 1);
         setTodos([...todoDelete]);
         setIserror(false);
@@ -78,18 +78,18 @@ function Welcome(props) {
       })
       .catch((error) => {
         setIserror(true);
-        setErrorMessage(`Unable to add delete Todo ${oldData.tableData.id}`);
+        setErrorMessage(`Unable to add delete Todo ${oldTodo.tableData.id}`);
         resolve();
       });
   };
 
-  const handleRowUpdate = (newData, oldData, resolve) => {
+  const handleRowUpdate = (newTodo, oldTodo, resolve) => {
     axios
-      .patch(api.TODOS + '/' + oldData.id, newData)
+      .patch(api.TODOS + '/' + oldTodo.id, newTodo)
       .then((res) => {
         const updatedTodoList = [...todos];
-        const index = oldData.tableData.id;
-        updatedTodoList[index] = newData;
+        const index = oldTodo.tableData.id;
+        updatedTodoList[index] = newTodo;
         setTodos([...updatedTodoList]);
         setIserror(false);
         setErrorMessage('');
@@ -97,7 +97,7 @@ function Welcome(props) {
       })
       .catch((error) => {
         setIserror(true);
-        setErrorMessage(`Unable to add update Todo ${oldData.id}`);
+        setErrorMessage(`Unable to add update Todo ${oldTodo.id}`);
         resolve();
       });
   };
@@ -125,17 +125,17 @@ function Welcome(props) {
             ]}
             data={todos}
             editable={{
-              onRowUpdate: (newData, oldData) =>
+              onRowUpdate: (newTodo, oldTodo) =>
                 new Promise((resolve) => {
-                  handleRowUpdate(newData, oldData, resolve);
+                  handleRowUpdate(newTodo, oldTodo, resolve);
                 }),
-              onRowAdd: (newData) =>
+              onRowAdd: (newTodo) =>
                 new Promise((resolve) => {
-                  handleRowAdd(newData, resolve);
+                  handleRowAdd(newTodo, resolve);
                 }),
-              onRowDelete: (oldData) =>
+              onRowDelete: (oldTodo) =>
                 new Promise((resolve) => {
-                  handleRowDelete(oldData, resolve);
+                  handleRowDelete(oldTodo, resolve);
                 }),
             }}
             options={{
