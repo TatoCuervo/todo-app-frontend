@@ -72,11 +72,32 @@ function Welcome(props) {
         const index = oldData.tableData.id;
         todoDelete.splice(index, 1);
         setTodos([...todoDelete]);
+        setIserror(false);
+        setErrorMessage('');
         resolve();
       })
       .catch((error) => {
         setIserror(true);
         setErrorMessage(`Unable to add delete Todo ${oldData.tableData.id}`);
+        resolve();
+      });
+  };
+
+  const handleRowUpdate = (newData, oldData, resolve) => {
+    axios
+      .patch(api.TODOS + '/' + oldData.id, newData)
+      .then((res) => {
+        const updatedTodoList = [...todos];
+        const index = oldData.tableData.id;
+        updatedTodoList[index] = newData;
+        setTodos([...updatedTodoList]);
+        setIserror(false);
+        setErrorMessage('');
+        resolve();
+      })
+      .catch((error) => {
+        setIserror(true);
+        setErrorMessage(`Unable to add update Todo ${oldData.id}`);
         resolve();
       });
   };
@@ -104,9 +125,9 @@ function Welcome(props) {
             ]}
             data={todos}
             editable={{
-              onRowUpdate: (newData) =>
+              onRowUpdate: (newData, oldData) =>
                 new Promise((resolve) => {
-                  handleRowUpdate(newData, resolve);
+                  handleRowUpdate(newData, oldData, resolve);
                 }),
               onRowAdd: (newData) =>
                 new Promise((resolve) => {
@@ -140,10 +161,6 @@ function Welcome(props) {
     </>
   );
 }
-
-const handleRowUpdate = (newData, oldData, resolve) => {
-  resolve();
-};
 
 const mapStateToProps = (state) => {
   return { username: state.auth.user };
