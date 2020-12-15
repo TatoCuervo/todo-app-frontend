@@ -8,6 +8,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import api from '../../api/api';
 import axios from 'axios';
+import { logOut } from '../../redux/actions/authActions';
 
 const useStyles = makeStyles((theme) => ({
   logoutButton: {
@@ -23,14 +24,16 @@ function Welcome(props) {
   const [iserror, setIserror] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const [todos, setTodos] = useState([]);
+  const [token, setToken] = useState();
 
   useEffect(() => {
     async function getTodos() {
+      const token = getToken();
       await axios
-        .get(api.TODOS)
+        .get(api.TODOS, { headers: { Authorization: `Bearer ${token}` } })
         .then((response) => {
           // check if the data is populated
-          console.log(response.data);
+          setToken(token);
           setTodos(response.data);
           setLoading(false);
         })
@@ -46,10 +49,12 @@ function Welcome(props) {
     }
   }, []);
 
+  const getToken = () => localStorage.getItem(`TOKEN-${props.user.sub}`);
+
   const handleRowAdd = (newTodo, resolve) => {
     axios
-      .post(api.TODOS, newTodo)
-      .then((res) => {
+      .post(api.TODOS, newTodo, { headers: { Authorization: `Bearer ${token}` } })
+      .then((_) => {
         let todoToAdd = [...todos];
         todoToAdd.push(newTodo);
         setTodos(todoToAdd);
@@ -66,8 +71,8 @@ function Welcome(props) {
 
   const handleRowDelete = (oldTodo, resolve) => {
     axios
-      .delete(api.TODOS + '/' + oldTodo.id)
-      .then((res) => {
+      .delete(api.TODOS + '/' + oldTodo.id, { headers: { Authorization: `Bearer ${token}` } })
+      .then((_) => {
         const todoDelete = [...todos];
         const index = oldTodo.tableData.id;
         todoDelete.splice(index, 1);
@@ -85,8 +90,8 @@ function Welcome(props) {
 
   const handleRowUpdate = (newTodo, oldTodo, resolve) => {
     axios
-      .patch(api.TODOS + '/' + oldTodo.id, newTodo)
-      .then((res) => {
+      .patch(api.TODOS + '/' + oldTodo.id, newTodo, { headers: { Authorization: `Bearer ${token}` } })
+      .then((_) => {
         const updatedTodoList = [...todos];
         const index = oldTodo.tableData.id;
         updatedTodoList[index] = newTodo;
@@ -103,7 +108,7 @@ function Welcome(props) {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    props.logOut();
     history.push('/login');
   };
 
@@ -162,8 +167,14 @@ function Welcome(props) {
   );
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logOut: () => dispatch(logOut),
+  };
+};
+
 const mapStateToProps = (state) => {
   return { user: state.auth.user };
 };
 
-export default connect(mapStateToProps, null)(Welcome);
+export default connect(mapStateToProps, mapDispatchToProps)(Welcome);
