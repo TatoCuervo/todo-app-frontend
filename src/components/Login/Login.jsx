@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {connect} from 'react-redux'
-import {setUser} from '../../redux/actions/authActions'
+import { connect } from 'react-redux';
+import { setUser } from '../../redux/actions/authActions';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Typography, Button, Card, Grid, CircularProgress, Snackbar } from '@material-ui/core';
@@ -8,6 +8,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from 'formik-material-ui';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import api from '../../api/api';
 
 const useStyles = makeStyles({
@@ -21,23 +22,27 @@ function Login(props) {
   let history = props.history;
   const classes = useStyles(props);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <>
       <Formik
-        initialValues={{ user: '', password: '' }}
+        initialValues={{ username: '', password: '' }}
         validationSchema={Yup.object({
-          user: Yup.string().required('Required'),
+          username: Yup.string().required('Required'),
           password: Yup.string().required('Required'),
         })}
         onSubmit={(values, { setSubmitting }) => {
           // display loading indicator
           setError(false);
           setSubmitting(true);
-          
+
           // Call Authenticate API
-          axios.post(api.AUTHENTICATE, {...values})
-            .then((_) => {
+          axios
+            .post(api.AUTHENTICATE, { ...values })
+            .then((response) => {
+              debugger;
+              console.log(jwt_decode(response.data));
               // auth success
               setSubmitting(false);
               props.setUser(values.user);
@@ -45,6 +50,7 @@ function Login(props) {
               history.push('/welcome');
             })
             .catch((err) => {
+              setErrorMessage(err.response.data.message);
               setSubmitting(false);
               setError(true);
             });
@@ -56,7 +62,7 @@ function Login(props) {
               <Grid container direction='column' alignItems='center' spacing={2}>
                 <Typography variant='h2'>Login</Typography>
                 <Grid item>
-                  <Field component={TextField} variant='outlined' name='user' label='User' />
+                  <Field component={TextField} variant='outlined' name='username' label='User' />
                 </Grid>
                 <Grid item>
                   <Field component={TextField} variant='outlined' type='password' label='Password' name='password' />
@@ -74,7 +80,7 @@ function Login(props) {
       </Formik>
       <Snackbar open={error} autoHideDuration={2000}>
         <MuiAlert elevation={6} variant='filled' severity='error'>
-          Wrong credentials!
+          {errorMessage}
         </MuiAlert>
       </Snackbar>
     </>
@@ -83,8 +89,8 @@ function Login(props) {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setUser: (username) => dispatch(setUser(username))
-  }
-}
+    setUser: (username) => dispatch(setUser(username)),
+  };
+};
 
 export default connect(null, mapDispatchToProps)(Login);
