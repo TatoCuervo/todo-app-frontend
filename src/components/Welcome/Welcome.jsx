@@ -111,7 +111,7 @@ function Welcome(props) {
     <>
       <Grid container direction='column' alignItems='center'>
         <Grid item xs={12}>
-          <h1>Welcome {props.username}</h1>
+          <h1>Welcome {props.user.sub}</h1>
         </Grid>
         {loading && <CircularProgress />}
         <Grid item xs={12}>
@@ -163,7 +163,7 @@ function Welcome(props) {
 }
 
 const mapStateToProps = (state) => {
-  return { username: state.auth.user };
+  return { user: state.auth.user };
 };
 
 export default connect(mapStateToProps, null)(Welcome);

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { setUser } from '../../redux/actions/authActions';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import _ from 'lodash';
 import { Typography, Button, Card, Grid, CircularProgress, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
@@ -41,12 +42,18 @@ function Login(props) {
           axios
             .post(api.AUTHENTICATE, { ...values })
             .then((response) => {
-              debugger;
-              console.log(jwt_decode(response.data));
-              // auth success
+              // decode jwt token
+              const token = jwt_decode(response.data.jwtToken);
+              const user = _.pick(token, ['sub', 'userId']);
+
+              // store token and update store with user details
               setSubmitting(false);
-              props.setUser(values.user);
-              localStorage.setItem(`TOKEN-${values.user}`, 'fake-mocked-token');
+              setError(false);
+              props.setUser(user);
+              setErrorMessage('');
+              localStorage.setItem(`TOKEN-${token.sub}`, response.data.jwtToken);
+
+              // redirect to welcome page
               history.push('/welcome');
             })
             .catch((err) => {

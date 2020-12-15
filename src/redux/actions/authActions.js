@@ -2,10 +2,10 @@ import { SET_USER, LOG_OUT } from './types';
 
 // Action Creators
 
-export const setUser = (userId) => {
+export const setUser = (user) => {
   return {
     type: SET_USER,
-    payload: userId,
+    payload: user,
   };
 };
 
