@@ -1,7 +1,6 @@
 const api = {
-  BASE: '/api/v1.0',
-  AUTHENTICATE: '/mock-authenticate-api',
-  TODOS: '/api/v1.0/users/1001/todos', // Hardcoded user id for now
+  AUTHENTICATE: '/api/v1.0/authenticate',
+  TODOS: '/api/v1.0/users/1001/todos', //TODO: Get logged in userId from JWT token
 };
 
 export default api;

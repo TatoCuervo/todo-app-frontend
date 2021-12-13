@@ -1,19 +1,22 @@
 import React from 'react';
-import {connect} from 'react-redux'
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
 function PrivateRoute(props) {
   console.log(props);
-    if(props.username !== null)
-    {
-      return <Route {...props }/>
-    } else {
-      return <Redirect to='/login' />
-    }
+  const token = getToken(props.user.sub);
+  console.log(token);
+  if (token !== null) {
+    return <Route {...props} />;
+  } else {
+    return <Redirect to='/login' />;
+  }
 }
 
-const mapStateToProps = state => {
-  return { username: state.auth.user };
+const getToken = (username) => localStorage.getItem(`TOKEN-${username}`);
+
+const mapStateToProps = (state) => {
+  return { user: state.auth.user };
 };
 
 export default connect(mapStateToProps, null)(PrivateRoute);
